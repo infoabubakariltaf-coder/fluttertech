@@ -81,8 +81,8 @@
         </div>
 
         <!-- Developer Credit -->
-        <div id="splash-credit" class="absolute bottom-12 transition-all duration-1000 ease-out translate-y-5 opacity-0">
-            <p class="text-slate-400 text-sm tracking-widest uppercase font-medium">
+        <div id="splash-credit" class="absolute bottom-6 sm:bottom-12 transition-all duration-1000 ease-out translate-y-5 opacity-0 w-full text-center px-4 left-0">
+            <p class="text-slate-400 text-xs sm:text-sm tracking-widest uppercase font-medium">
                 Developed by <span class="text-blue-600 font-bold">Abubakar iltaf</span>
             </p>
         </div>
@@ -90,8 +90,8 @@
 
     <!-- LOGIN SCREEN -->
     <div id="login-screen" class="hidden absolute inset-0 bg-slate-50 flex flex-col items-center justify-center p-4 z-40">
-        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 w-full max-w-md slide-up relative z-10">
-            <div class="text-center mb-8">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 sm:p-8 w-full max-w-md slide-up relative z-10">
+            <div class="text-center mb-6 sm:mb-8">
                 <div class="bg-blue-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <i class="ph ph-calendar-blank text-blue-600" style="font-size: 32px;"></i>
                 </div>
@@ -145,18 +145,38 @@
     </div>
 
     <!-- MAIN APP LAYOUT -->
-    <div id="app-screen" class="hidden min-h-screen bg-slate-50 flex">
+    <div id="app-screen" class="hidden min-h-screen bg-slate-50 flex flex-col md:flex-row w-full overflow-hidden">
+        
+        <!-- Mobile Header (Visible only on small screens) -->
+        <header class="md:hidden bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-sm w-full">
+            <div class="flex items-center gap-2 font-bold text-xl text-slate-900">
+                <i class="ph ph-calendar-blank text-blue-600" style="font-size: 26px;"></i>
+                WorkFlow
+            </div>
+            <button onclick="toggleMobileMenu()" class="p-2 text-slate-600 hover:bg-slate-100 hover:text-blue-600 rounded-xl transition-colors">
+                <i class="ph ph-list" style="font-size: 28px;"></i>
+            </button>
+        </header>
+
+        <!-- Mobile Overlay -->
+        <div id="mobile-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden transition-opacity duration-300 opacity-0"></div>
+
         <!-- Sidebar Navigation -->
-        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full shadow-sm z-20">
-            <div class="p-6">
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                    <i class="ph ph-calendar-blank text-blue-600" style="font-size: 28px;"></i>
-                    WorkFlow
-                </h1>
-                <p class="text-sm text-slate-500 mt-1">Your Personal Organizer</p>
+        <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col fixed inset-y-0 left-0 h-full shadow-2xl md:shadow-sm z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="p-6 flex items-start justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                        <i class="ph ph-calendar-blank text-blue-600" style="font-size: 28px;"></i>
+                        WorkFlow
+                    </h1>
+                    <p class="text-sm text-slate-500 mt-1">Your Personal Organizer</p>
+                </div>
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 -mr-2 text-slate-400 hover:bg-slate-100 hover:text-red-500 rounded-lg transition-colors">
+                    <i class="ph ph-x" style="font-size: 24px;"></i>
+                </button>
             </div>
             
-            <nav id="sidebar-nav" class="flex-1 px-4 space-y-2">
+            <nav id="sidebar-nav" class="flex-1 px-4 space-y-2 overflow-y-auto pb-4">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 bg-blue-600 text-white shadow-md">
                     <i class="ph ph-squares-four" style="font-size: 20px;"></i><span class="font-medium">Dashboard</span>
                 </button>
@@ -177,14 +197,14 @@
                 </button>
             </nav>
 
-            <div class="p-4 border-t border-slate-100 text-xs text-slate-400 text-center">
+            <div class="p-4 border-t border-slate-100 text-xs text-slate-400 text-center bg-white">
                 WorkFlow App Preview
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 ml-64 p-8 max-w-6xl w-full">
-            <div id="main-content-area"></div>
+        <main class="flex-1 md:ml-64 w-full overflow-y-auto h-[calc(100vh-65px)] md:h-screen">
+            <div id="main-content-area" class="p-4 sm:p-8 max-w-6xl mx-auto w-full"></div>
         </main>
     </div>
 
@@ -226,6 +246,24 @@
         let clockInterval;
         let alarmInterval;
         let isAuthenticated = false;
+        let isMobileMenuOpen = false;
+
+        // --- MOBILE MENU LOGIC ---
+        window.toggleMobileMenu = function() {
+            isMobileMenuOpen = !isMobileMenuOpen;
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+
+            if (isMobileMenuOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        };
 
         // --- SPLASH SCREEN LOGIC ---
         function runSplashAnimation() {
@@ -370,6 +408,11 @@
             const activeEl = document.getElementById(`nav-${tabId}`);
             activeEl.className = "nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 bg-blue-600 text-white shadow-md";
             
+            // Close mobile menu on tab switch
+            if (window.innerWidth < 768 && isMobileMenuOpen) {
+                toggleMobileMenu();
+            }
+
             renderView();
         }
 
@@ -518,10 +561,10 @@
                     <span class="ml-auto bg-white bg-opacity-50 px-3 py-1 rounded-full text-sm font-bold">${completedCount} / ${typeTasks.length}</span>
                 </div>
                 <div class="p-6">
-                    <form onsubmit="handleAddTask(event, '${type}')" class="flex gap-3 mb-6">
-                        <input type="text" name="text" placeholder="Add new ${title.toLowerCase()}..." class="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
-                        <input type="time" name="time" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-32 cursor-pointer" />
-                        <button type="submit" class="bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors flex items-center gap-2">
+                    <form onsubmit="handleAddTask(event, '${type}')" class="flex flex-col sm:flex-row gap-3 mb-6">
+                        <input type="text" name="text" placeholder="Add new ${title.toLowerCase()}..." class="w-full sm:flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
+                        <input type="time" name="time" class="w-full sm:w-32 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors cursor-pointer" />
+                        <button type="submit" class="w-full sm:w-auto bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
                             <i class="ph ph-plus" style="font-size:18px;"></i> Add
                         </button>
                     </form>
@@ -564,100 +607,9 @@
                 </h2>
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="p-6 border-b border-slate-100 bg-slate-50">
-                        <form onsubmit="handleAddBirthday(event)" class="flex flex-col sm:flex-row gap-4 items-end">
-                            <div class="flex-1 w-full">
-                                <label class="block text-sm font-semibold text-slate-600 mb-1">Colleague Name</label>
-                                <input type="text" name="name" placeholder="e.g., Jane Doe" class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" required />
-                            </div>
-                            <div class="flex-1 w-full">
-                                <label class="block text-sm font-semibold text-slate-600 mb-1">Birth Date</label>
-                                <input type="date" name="date" class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" required />
-                            </div>
-                            <button type="submit" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700 font-medium transition-colors h-[42px] flex items-center justify-center gap-2">
-                                <i class="ph ph-plus" style="font-size:18px;"></i> Add
-                            </button>
-                        </form>
-                    </div>
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-white border-b border-slate-100">
-                                <th class="p-4 font-semibold text-slate-600">Name</th>
-                                <th class="p-4 font-semibold text-slate-600">Date</th>
-                                <th class="p-4 font-semibold text-slate-600 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>${tableRows}</tbody>
-                    </table>
-                </div>
-            </div>`;
-        }
-
-        function getNotesHTML() {
-            let notesCards = notes.map(note => `
-                <div class="bg-amber-50 rounded-2xl p-6 shadow-sm border border-amber-100 flex flex-col">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="font-bold text-lg text-slate-800">${note.title}</h3>
-                        <button onclick="deleteNote(${note.id})" class="text-slate-400 hover:text-red-500 transition-colors">
-                            <i class="ph ph-trash" style="font-size:18px;"></i>
-                        </button>
-                    </div>
-                    <p class="text-slate-600 flex-1 whitespace-pre-wrap">${note.content}</p>
-                </div>
-            `).join('');
-
-            return `
-            <div class="fade-in">
-                <h2 class="text-3xl font-bold text-slate-900 mb-8 flex items-center gap-3">
-                    <i class="ph ph-note text-amber-500" style="font-size:32px;"></i> Notes & Ideas
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    <form onsubmit="handleAddNote(event)" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 border-dashed flex flex-col h-full hover:border-amber-300 transition-colors">
-                        <input type="text" name="title" placeholder="Note Title..." class="font-bold text-lg mb-4 bg-transparent focus:outline-none placeholder:text-slate-400" required />
-                        <textarea name="content" placeholder="Write your note here..." class="flex-1 w-full bg-transparent resize-none focus:outline-none text-slate-600 placeholder:text-slate-300 min-h-[100px]"></textarea>
-                        <button type="submit" class="mt-4 bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 font-medium">
-                            <i class="ph ph-plus" style="font-size:18px;"></i> Save Note
-                        </button>
-                    </form>
-                    ${notesCards}
-                </div>
-            </div>`;
-        }
-
-        function getSheetHTML() {
-            let rows = sheetTasks.length === 0 
-                ? `<tr><td colspan="3" class="p-8 text-center text-slate-500">No tasks added to the sheet yet.</td></tr>`
-                : sheetTasks.map(task => {
-                    let colorClass = task.status === 'not started' ? 'bg-red-100 text-red-700 border-red-200' : 
-                                     task.status === 'pending' ? 'bg-orange-100 text-orange-700 border-orange-200' : 
-                                     'bg-green-100 text-green-700 border-green-200';
-                    return `
-                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                        <td class="p-4 font-medium text-slate-800">${task.task}</td>
-                        <td class="p-4">
-                            <select onchange="updateSheetStatus(${task.id}, this.value)" class="text-sm font-bold px-3 py-1.5 rounded-lg outline-none cursor-pointer border transition-colors ${colorClass}">
-                                <option value="not started" ${task.status === 'not started' ? 'selected' : ''}>Not Started</option>
-                                <option value="pending" ${task.status === 'pending' ? 'selected' : ''}>Pending</option>
-                                <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
-                            </select>
-                        </td>
-                        <td class="p-4 text-right">
-                            <button onclick="deleteSheetTask(${task.id})" class="text-red-400 hover:text-red-600 transition-colors p-2 rounded-lg hover:bg-red-50">
-                                <i class="ph ph-trash" style="font-size:18px;"></i>
-                            </button>
-                        </td>
-                    </tr>`;
-                }).join('');
-
-            return `
-            <div class="fade-in">
-                <h2 class="text-3xl font-bold text-slate-900 mb-8 flex items-center gap-3">
-                    <i class="ph ph-table text-emerald-600" style="font-size:32px;"></i> Monthly Task Sheet
-                </h2>
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-6 border-b border-slate-100 bg-slate-50">
-                        <form onsubmit="handleAddSheetTask(event)" class="flex gap-3">
-                            <input name="task" placeholder="Enter new monthly sheet task..." class="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors" required />
-                            <button type="submit" class="bg-emerald-600 text-white px-6 py-2 rounded-xl hover:bg-emerald-700 font-medium transition-colors flex items-center gap-2">
+                        <form onsubmit="handleAddSheetTask(event)" class="flex flex-col sm:flex-row gap-3">
+                            <input name="task" placeholder="Enter new monthly sheet task..." class="w-full sm:flex-1 px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors" required />
+                            <button type="submit" class="w-full sm:w-auto bg-emerald-600 text-white px-6 py-2 rounded-xl hover:bg-emerald-700 font-medium transition-colors flex items-center justify-center gap-2">
                                 <i class="ph ph-plus" style="font-size:18px;"></i> Add Row
                             </button>
                         </form>
@@ -717,9 +669,9 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="p-6 border-b border-slate-100 bg-slate-50">
                         <form onsubmit="handleAddTeamTask(event)" class="flex flex-col md:flex-row gap-3">
-                            <input name="member" placeholder="Team Member Name..." class="md:w-1/4 px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" required />
-                            <input name="task" placeholder="Assigned Task..." class="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" required />
-                            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 font-medium transition-colors flex items-center justify-center gap-2">
+                            <input name="member" placeholder="Team Member Name..." class="w-full md:w-1/4 px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" required />
+                            <input name="task" placeholder="Assigned Task..." class="w-full md:flex-1 px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" required />
+                            <button type="submit" class="w-full md:w-auto bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 font-medium transition-colors flex items-center justify-center gap-2">
                                 <i class="ph ph-plus" style="font-size:18px;"></i> Assign
                             </button>
                         </form>
