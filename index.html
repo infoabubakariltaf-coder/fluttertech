@@ -95,7 +95,7 @@
                 <div class="bg-blue-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <i class="ph ph-calendar-blank text-blue-600" style="font-size: 32px;"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-slate-900">WorkFlow</h1>
+                <h1 class="text-3xl font-bold text-slate-900">Flutter Tech</h1>
                 <p class="text-slate-500 mt-2">Sign in to your workspace</p>
             </div>
 
@@ -151,7 +151,7 @@
         <header class="md:hidden bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-sm w-full">
             <div class="flex items-center gap-2 font-bold text-xl text-slate-900">
                 <i class="ph ph-calendar-blank text-blue-600" style="font-size: 26px;"></i>
-                WorkFlow
+                Flutter Tech
             </div>
             <button onclick="toggleMobileMenu()" class="p-2 text-slate-600 hover:bg-slate-100 hover:text-blue-600 rounded-xl transition-colors">
                 <i class="ph ph-list" style="font-size: 28px;"></i>
@@ -167,7 +167,7 @@
                 <div>
                     <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                         <i class="ph ph-calendar-blank text-blue-600" style="font-size: 28px;"></i>
-                        WorkFlow
+                        Flutter Tech
                     </h1>
                     <p class="text-sm text-slate-500 mt-1">Your Personal Organizer</p>
                 </div>
@@ -198,7 +198,7 @@
             </nav>
 
             <div class="p-4 border-t border-slate-100 text-xs text-slate-400 text-center bg-white">
-                WorkFlow App Preview
+                Flutter Tech App Preview
             </div>
         </aside>
 
@@ -586,7 +586,7 @@
         }
 
         function getBirthdaysHTML() {
-            let tableRows = birthdays.length === 0 
+            let rows = birthdays.length === 0 
                 ? `<tr><td colspan="3" class="p-8 text-center text-slate-500">No birthdays added yet.</td></tr>`
                 : birthdays.map(b => `
                     <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
@@ -604,6 +604,95 @@
             <div class="fade-in">
                 <h2 class="text-3xl font-bold text-slate-900 mb-8 flex items-center gap-3">
                     <i class="ph ph-gift text-purple-600" style="font-size:32px;"></i> Colleague Birthdays
+                </h2>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 bg-slate-50">
+                        <form onsubmit="handleAddBirthday(event)" class="flex flex-col sm:flex-row gap-3">
+                            <input name="name" placeholder="Colleague Name..." class="w-full sm:flex-1 px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors" required />
+                            <input type="date" name="date" class="w-full sm:w-auto px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-slate-600" required />
+                            <button type="submit" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700 font-medium transition-colors flex items-center justify-center gap-2">
+                                <i class="ph ph-plus" style="font-size:18px;"></i> Add Birthday
+                            </button>
+                        </form>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
+                            <thead>
+                                <tr class="bg-white border-b border-slate-100">
+                                    <th class="p-4 font-semibold text-slate-600">Name</th>
+                                    <th class="p-4 font-semibold text-slate-600 w-48">Date</th>
+                                    <th class="p-4 font-semibold text-slate-600 text-right w-24">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function getNotesHTML() {
+            let notesList = notes.length === 0
+                ? `<p class="text-center text-slate-500 py-8">No notes added yet.</p>`
+                : `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">` + notes.map(n => `
+                    <div class="bg-yellow-50 border border-yellow-100 p-4 rounded-xl relative group">
+                        <h4 class="font-bold text-slate-800 mb-2 pr-8">${n.title}</h4>
+                        <p class="text-sm text-slate-600 whitespace-pre-wrap">${n.content}</p>
+                        <button onclick="deleteNote(${n.id})" class="absolute top-3 right-3 text-yellow-400 hover:text-red-500 p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="ph ph-trash" style="font-size:18px;"></i>
+                        </button>
+                    </div>
+                `).join('') + `</div>`;
+
+            return `
+            <div class="fade-in">
+                <h2 class="text-3xl font-bold text-slate-900 mb-8 flex items-center gap-3">
+                    <i class="ph ph-note text-yellow-500" style="font-size:32px;"></i> Notes & Ideas
+                </h2>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                    <div class="p-6 border-b border-slate-100 bg-slate-50">
+                        <form onsubmit="handleAddNote(event)" class="flex flex-col gap-3">
+                            <input name="title" placeholder="Note Title..." class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-colors" required />
+                            <textarea name="content" placeholder="Note Content..." class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-colors resize-none h-24" required></textarea>
+                            <button type="submit" class="self-end bg-yellow-500 text-white px-6 py-2 rounded-xl hover:bg-yellow-600 font-medium transition-colors flex items-center gap-2">
+                                <i class="ph ph-plus" style="font-size:18px;"></i> Add Note
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                ${notesList}
+            </div>`;
+        }
+
+        function getSheetHTML() {
+            let rows = sheetTasks.length === 0 
+                ? `<tr><td colspan="3" class="p-8 text-center text-slate-500">No monthly tasks added yet.</td></tr>`
+                : sheetTasks.map(task => {
+                    let colorClass = task.status === 'not started' ? 'bg-slate-100 text-slate-700 border-slate-200' : 
+                                     task.status === 'pending' ? 'bg-orange-100 text-orange-700 border-orange-200' : 
+                                     'bg-green-100 text-green-700 border-green-200';
+                    return `
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                        <td class="p-4 font-medium text-slate-800">${task.task}</td>
+                        <td class="p-4">
+                            <select onchange="updateSheetStatus(${task.id}, this.value)" class="text-sm font-bold px-3 py-1.5 rounded-lg outline-none cursor-pointer border transition-colors ${colorClass}">
+                                <option value="not started" ${task.status === 'not started' ? 'selected' : ''}>Not Started</option>
+                                <option value="pending" ${task.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
+                            </select>
+                        </td>
+                        <td class="p-4 text-right">
+                            <button onclick="deleteSheetTask(${task.id})" class="text-red-400 hover:text-red-600 transition-colors p-2 rounded-lg hover:bg-red-50">
+                                <i class="ph ph-trash" style="font-size:18px;"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                }).join('');
+
+            return `
+            <div class="fade-in">
+                <h2 class="text-3xl font-bold text-slate-900 mb-8 flex items-center gap-3">
+                    <i class="ph ph-table text-emerald-600" style="font-size:32px;"></i> Monthly Task Sheet
                 </h2>
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="p-6 border-b border-slate-100 bg-slate-50">
